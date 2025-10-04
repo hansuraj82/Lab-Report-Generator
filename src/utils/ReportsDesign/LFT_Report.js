@@ -3,16 +3,17 @@ import { ALB_GLOBULIN_RATIO_RANGE, ALBUMIN_RANGE, GLOBULIN_RANGE, HB_RANGE, S_AL
 
 export function LFT_Design(doc, y, LFT_Data) {
     y += 12;
-    doc.setFont("times", "bold").setFontSize(16).setTextColor(0, 0, 0);
-    doc.text("LIVER FUNCTION TEST (L F T):-", 20, y);
+    doc.setFont("Cambria", "bold").setFontSize(16).setTextColor(0, 0, 0);
+    doc.text("LIVER FUNCTION TEST (L F T):-", 18, y);
     y += 10;
     doc.setFontSize(14);
-    doc.text("S BILLIRUBIN", 20, y);
+    doc.text(" S BILLIRUBIN", 20, y);
     y += 10;
 
 
-    doc.setFont("times", "normal").setFontSize(12);;
+    doc.setFont("Cambria", "normal").setFontSize(12);;
     [...S_BILLIRUBIN_RANGE, ...SGPT_RANGE, ...SGOT_RANGE, ...S_ALKALINE_PHOSPHATE_RANGE, ...TOTAL_PROTEIN_RANGE, ...ALBUMIN_RANGE, ...GLOBULIN_RANGE, ...ALB_GLOBULIN_RATIO_RANGE].forEach((field) => {
+        doc.text("•",16,y)
         doc.text(field.key, 20, y);
         getArrowValue(LFT_Data[field.key], field.range ,doc,95 , y-4);
         getValOrDash(LFT_Data[field.key],doc,y)

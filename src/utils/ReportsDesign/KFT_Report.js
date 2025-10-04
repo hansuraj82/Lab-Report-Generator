@@ -11,12 +11,12 @@ import {
 
 export function KFT_Design(doc, y, KFT_Data) {
     y += 12;
-    doc.setFont("times", "bold").setFontSize(16).setTextColor(0, 0, 0);
+    doc.setFont("cambria", "bold").setFontSize(16).setTextColor(0, 0, 0);
     doc.text("KIDNEY FUNCTION TEST (K F T):-", 20, y);
     y += 10;
 
 
-    doc.setFont("times", "normal").setFontSize(12);
+    doc.setFont("cambria", "normal").setFontSize(12);
     [
         ...S_CREATININE_RANGE,
         ...S_UREA_RANGE,

@@ -90,6 +90,12 @@ export const S_CALCIUM_RANGE = [
   { key: "S. CALCIUM", range: "8.5-10.2", unit: "mmol/l" }
 ];
 
+export const WIDAL_RANGE = [
+  {
+    key: "WIDAL",range: "Less than 1:80"
+  }
+];
+
 
 
 

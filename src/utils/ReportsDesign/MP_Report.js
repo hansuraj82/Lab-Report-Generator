@@ -1,6 +1,6 @@
 export function MP_card_Design(doc, mpCardResult, y) {
     y += 12;
-    doc.setFont("times", "normal").setFontSize(12);
+    doc.setFont("Cambria", "normal").setFontSize(12);
     doc.text("MP CARD", 20, y);
 
     if (mpCardResult) {
@@ -14,7 +14,7 @@ export function MP_card_Design(doc, mpCardResult, y) {
             const firstPart = `${marker} ${rest.shift()}`;
 
             // draw "P F" or "P V" in red
-            doc.setFont("times", "bold").setFontSize(11).setTextColor(255, 0, 0);
+            doc.setFont("Cambria", "bold").setFontSize(11).setTextColor(255, 0, 0);
             doc.text(firstPart, x, y);
             x += doc.getTextWidth(firstPart + " ");
 
@@ -26,7 +26,7 @@ export function MP_card_Design(doc, mpCardResult, y) {
             });
         } else {
             // default case (like "NEGATIVE")
-            doc.setFont("times", "bold").setFontSize(11).setTextColor(0, 0, 0);
+            doc.setFont("Cambria", "bold").setFontSize(11).setTextColor(0, 0, 0);
             doc.text(mpCardResult, x, y);
         }
 

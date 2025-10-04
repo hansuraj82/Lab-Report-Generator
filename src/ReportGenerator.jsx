@@ -5,12 +5,12 @@ import {
   ALB_GLOBULIN_RATIO_RANGE,
   ALBUMIN_RANGE,
   CBC_MAIN, DIFFERENTIAL_WBC,
-  GLOBULIN_RANGE, 
+  GLOBULIN_RANGE,
   HB_RANGE,
   S_ALKALINE_PHOSPHATE_RANGE,
-  S_BILLIRUBIN_RANGE, 
+  S_BILLIRUBIN_RANGE,
   SGOT_RANGE,
-  SGPT_RANGE, 
+  SGPT_RANGE,
   TOTAL_PROTEIN_RANGE,
   //KFT RANGE
   S_CREATININE_RANGE,
@@ -32,7 +32,7 @@ export default function ReportGenerator() {
   const [gender, setGender] = useState("M");
   const [address, setAddress] = useState("");
   const [refBy, setRefBy] = useState("");
-  const [serialNo, setSerialNo] = useState(1);
+  const [serialNo, setSerialNo] = useState();
   const [cbcData, setCbcData] = useState({});
   const [LFT_Data, setLFT_Data] = useState({});
   const [KFT_Data, setKFT_Data] = useState({});
@@ -40,6 +40,10 @@ export default function ReportGenerator() {
   const [showPreview, setShowPreview] = useState(false);
 
   const [mpCardResult, setMpCardResult] = useState("");
+
+  const [widalData, setWidalData] = useState({});
+  console.log(widalData);
+
 
   const [HB_Float_Value, set_HB_Float_Value] = useState("");
   const [HB_Percent_Value, set_HB_Percent_Value] = useState("");
@@ -57,18 +61,11 @@ export default function ReportGenerator() {
   ]);
   const [newDoctor, setNewDoctor] = useState("");
 
-  useEffect(() => {
-    const storedSerial = localStorage.getItem("serialNo");
-    if (storedSerial) {
-      setSerialNo(parseInt(storedSerial) + 1);
-    }
-  }, []);
 
 
   const handleCBCChange = (field, value) => {
     setCbcData({ ...cbcData, [field]: value });
   };
-  console.log(cbcData);
 
 
   const handleLFTChange = (field, value) => {
@@ -120,16 +117,15 @@ export default function ReportGenerator() {
       gender,
       address,
       refBy,
-      serialNo,
       cbcData,
       selectedReports,
       setPdfUrl,
       setShowPreview,
-      setSerialNo,
       mpCardResult,
       HB_value,
       LFT_Data,
-      KFT_Data
+      KFT_Data,
+      widalData
     })
   }
 
@@ -184,7 +180,7 @@ export default function ReportGenerator() {
               </label>
             ))} */}
 
-            {["CBC", "HB", "Widal", "MP card", "KFT", "LFT","S BILLIRUBIN","SGPT","SGOT", "S ALKALINE PHOSHATE","TOTAL PROTEIN","ALBUMIN","GLOBULIN","ALB/GLOBULIN RATIO","S. CREATININE","S. UREA","S.URIC ACID","S. CHLORIDE","S . POTASSIUM","S . SODIUM","S. CALCIUM"].map((r) => (
+            {["CBC", "HB", "Widal", "MP card", "KFT", "LFT", "S BILLIRUBIN", "SGPT", "SGOT", "S ALKALINE PHOSHATE", "TOTAL PROTEIN", "ALBUMIN", "GLOBULIN", "ALB/GLOBULIN RATIO", "S. CREATININE", "S. UREA", "S.URIC ACID", "S. CHLORIDE", "S . POTASSIUM", "S . SODIUM", "S. CALCIUM"].map((r) => (
               <label key={r} className="flex items-center space-x-2">
                 <input
                   type="checkbox"
@@ -230,6 +226,77 @@ export default function ReportGenerator() {
               </select>
             </div>
           )}
+
+          {/* Widal Test */}
+          {selectedReports.includes("Widal") && (
+            <div className="mb-4">
+              <h2 className="font-semibold mb-2 text-gray-700">WIDAL TEST</h2>
+
+              {/* Table Header */}
+              <div className="grid grid-cols-4 gap-4 border p-3 rounded text-sm font-semibold bg-gray-100">
+                <span>Test</span>
+                <span>Result</span>
+                <span>Titre</span>
+                <span>Remarks</span>
+              </div>
+
+              {/* Table Rows */}
+              {["S- TYPHI “O”", "S- TYPHI “H”", "S- TYPHI “AH”", "S- TYPHI “BH”"].map((test) => (
+                <div
+                  key={test}
+                  className="grid grid-cols-4 gap-4 border-b p-2 items-center"
+                >
+                  {/* Column 1: Key */}
+                  <span className="font-semibold">{test}</span>
+
+                  {/* Column 2: Select */}
+                  <select
+                    className="border p-2 rounded"
+                    value={widalData[test]?.result || ""}
+                    onChange={(e) =>
+                      setWidalData({
+                        ...widalData,
+                        [test]: { ...widalData[test], result: e.target.value },
+                      })
+                    }
+                  >
+                    <option value="">Select</option>
+                    <option value="+VE">+VE</option>
+                    <option value="NEG">NEG</option>
+                  </select>
+
+                  {/* Column 3: Input (Titre) */}
+                  <input
+                    className="border p-2 rounded"
+                    placeholder="Titre"
+                    value={widalData[test]?.titre || ""}
+                    onChange={(e) =>
+                      setWidalData({
+                        ...widalData,
+                        [test]: { ...widalData[test], titre: e.target.value },
+                      })
+                    }
+                  />
+
+                  {/* Column 4: Input (Remarks) */}
+                  <input
+                    className="border p-2 rounded"
+                    placeholder="Remarks"
+                    value={widalData[test]?.remarks || ""}
+                    onChange={(e) =>
+                      setWidalData({
+                        ...widalData,
+                        [test]: { ...widalData[test], remarks: e.target.value },
+                      })
+                    }
+                  />
+                </div>
+              ))}
+            </div>
+          )}
+
+
+
           {/* Hemoglobin line */}
           {selectedReports.includes("HB") && (
             <div>
