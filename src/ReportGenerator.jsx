@@ -28,11 +28,10 @@ import {
 
 export default function ReportGenerator() {
   const [patientName, setPatientName] = useState("");
-  const [age, setAge] = useState("");
+  const [age, setAge] = useState({ year: "", month: "", day: "" });
   const [gender, setGender] = useState("M");
   const [address, setAddress] = useState("");
   const [refBy, setRefBy] = useState("");
-  const [serialNo, setSerialNo] = useState();
   const [cbcData, setCbcData] = useState({});
   const [LFT_Data, setLFT_Data] = useState({});
   const [KFT_Data, setKFT_Data] = useState({});
@@ -42,7 +41,6 @@ export default function ReportGenerator() {
   const [mpCardResult, setMpCardResult] = useState("");
 
   const [widalData, setWidalData] = useState({});
-  console.log(widalData);
 
 
   const [HB_Float_Value, set_HB_Float_Value] = useState("");
@@ -64,19 +62,98 @@ export default function ReportGenerator() {
 
 
   const handleCBCChange = (field, value) => {
-    setCbcData({ ...cbcData, [field]: value });
+    const updated = { ...cbcData, [field]: value };
+
+    // 🩸 Handle Hemoglobin calculation
+    if (field === "HEMOGLOBIN") {
+      const numericValue = Number(value);
+      if (!isNaN(numericValue)) {
+        const calculated = Math.floor((numericValue * 100) / 14.6);
+        updated[field] = { raw: numericValue, percent: calculated };
+      } else {
+        updated[field] = { raw: value, percent: "" };
+      }
+    }
+
+    // 🧮 Handle automatic MONOCYTES + BASOPHILS calculation
+    if (["NEUTROPHILLS", "LYMPHOCYTES", "ESONOPHILS"].includes(field)) {
+      const n = Number(updated["NEUTROPHILLS"] || 0);
+      const l = Number(updated["LYMPHOCYTES"] || 0);
+      const e = Number(updated["ESONOPHILS"] || 0);
+
+      if (!isNaN(n) && !isNaN(l) && !isNaN(e)) {
+        const calcValue = 100 - (n + l + e);
+        updated["MONOCYTES"] = calcValue >= 0 ? calcValue : 0; // prevent negative
+        updated["BASOPHILS"] = "00";
+      }
+    }
+
+    // ✅ Finally update state
+    setCbcData(updated);
+  };
+
+  const handleHbChange = (val) => {
+    const num = Number(val);
+    const percent = isNaN(num) ? "0" : Math.floor((num * 100) / 14.6);
+
+    set_HB_Float_Value(val);
+    set_HB_Percent_Value(`${percent}%`);
+    setHB_value(`${val} / ${percent}%`);
   };
 
 
+
+
+  //   const handleLFTChange = (field, value) => {
+  // const updated = { ...LFT_Data, [field]: value };
+  //     if (["TOTOL PROTEIN", "ALBUMIN"].includes(field)) {
+  //         const totProteinVal = Number(updated["TOTOL PROTEIN"] || 0);
+  //         const albuminVal = Number(updated["ALBUMIN"] || 0);
+  //         if(!isNaN(totProteinVal) && !isNaN(albuminVal)) {
+  //           const calculatedValue = totProteinVal - albuminVal;
+  //           updated["GLOBULIN"] = calculatedValue >= 0  ? calculatedValue : 0; //prevent negative
+  //         }
+  //     }
+
+
+  //     setLFT_Data(updated);
+  //   }
+
+
   const handleLFTChange = (field, value) => {
-    setLFT_Data({ ...LFT_Data, [field]: value });
-  }
+    // Clone existing data
+    const updated = { ...LFT_Data, [field]: value };
+
+    // Parse numeric values
+    const totalProtein = Number(updated["TOTAL PROTEIN"] || 0);
+    const albumin = Number(updated["ALBUMIN"] || 0);
+
+    // --- 1️⃣ Auto-calculate GLOBULIN ---
+    if (!isNaN(totalProtein) && !isNaN(albumin)) {
+      const globulin = Math.max(totalProtein - albumin, 0); // prevent negative
+      updated["GLOBULIN"] = globulin.toFixed(2);
+    }
+
+    // --- 2️⃣ Auto-calculate ALB/GLOBULIN RATIO ---
+    const globulinVal = Number(updated["GLOBULIN"]);
+    if (!isNaN(albumin) && globulinVal > 0) {
+      const ratio = albumin / globulinVal;
+      updated["ALB/GLOBULIN RATIO"] = ratio.toFixed(2);
+    } else {
+      updated["ALB/GLOBULIN RATIO"] = "";
+    }
+
+    // Update state once (React best practice)
+    setLFT_Data(updated);
+  };
+
 
   const handleKFTChange = (field, value) => {
     setKFT_Data({ ...KFT_Data, [field]: value });
   };
 
 
+console.log(age);
 
 
   const handleReportSelection = (report) => {
@@ -104,10 +181,6 @@ export default function ReportGenerator() {
     const isCBCSelected = selectedReports.includes("CBC");
     return report !== "CBC" && report !== "MP card" && isCBCSelected;
   };
-  //this is for merge HB value with the percent value and the main value
-  useEffect(() => {
-    setHB_value(`${HB_Float_Value} / ${HB_Percent_Value}%`)
-  }, [HB_Float_Value, HB_Percent_Value])
 
 
   const handleGeneratePdf = () => {
@@ -144,12 +217,46 @@ export default function ReportGenerator() {
           {/* Patient Info */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <input className="border p-2 rounded" placeholder="Patient Name" value={patientName} onChange={(e) => setPatientName(e.target.value)} />
-            <input className="border p-2 rounded" type="number" min={1} max="100" placeholder="Age" value={age} onChange={(e) => setAge(e.target.value)} />
+            <div className="flex gap-2">
+              <input
+                className="border p-2 rounded w-1/3"
+                type="number"
+                min="0"
+                placeholder="Years"
+                value={age.year}
+                onChange={(e) =>
+                  setAge({ ...age, year: e.target.value ? Number(e.target.value) : "" })
+                }
+              />
+              <input
+                className="border p-2 rounded w-1/3"
+                type="number"
+                min="0"
+                max="11"
+                placeholder="Months"
+                value={age.month}
+                onChange={(e) =>
+                  setAge({ ...age, month: e.target.value ? Number(e.target.value) : "" })
+                }
+              />
+              <input
+                className="border p-2 rounded w-1/3"
+                type="number"
+                min="0"
+                max="30"
+                placeholder="Days"
+                value={age.day}
+                onChange={(e) =>
+                  setAge({ ...age, day: e.target.value ? Number(e.target.value) : "" })
+                }
+              />
+            </div>
+
 
             {/* Gender Select */}
             <select className="border p-2 rounded" value={gender} onChange={(e) => setGender(e.target.value)}>
-              <option value="M">M</option>
-              <option value="F">F</option>
+              <option value="M">MALE</option>
+              <option value="F">FEMALE</option>
               <option value="UNKNOWN">UNKNOWN</option>
             </select>
 
@@ -204,8 +311,28 @@ export default function ReportGenerator() {
               <h2 className="font-semibold mb-2 text-gray-700">CBC Values</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4  border p-3 rounded">
                 {[...CBC_MAIN, ...DIFFERENTIAL_WBC].map((field) => (
-                  <input key={field.key} className="border p-2 rounded" placeholder={`${field.key} (${field.unit})`} value={cbcData[field.key] || ""} onChange={(e) => handleCBCChange(field.key, e.target.value)} />
+                  <div key={field.key} className="flex flex-col">
+                    <input
+                      type={field.key === "HEMOGLOBIN" ? "number" : "text"}
+                      className="border p-2 rounded"
+                      placeholder={`${field.key} (${field.unit})`}
+                      disabled={field.key === "MONOCYTES" || field.key === "BASOPHILS"}
+                      value={
+                        field.key === "HEMOGLOBIN"
+                          ? cbcData[field.key]?.raw || ""
+                          : cbcData[field.key] || ""
+                      }
+                      onChange={(e) => handleCBCChange(field.key, e.target.value)}
+                    />
+                    {/* Display calculated percentage below */}
+                    {field.key === "HEMOGLOBIN" && cbcData[field.key]?.percent && (
+                      <span className="text-sm text-green-800 mt-1">
+                        HEMOGLOBIN VALUE IS {cbcData[field.key].raw} / {cbcData[field.key].percent}%
+                      </span>
+                    )}
+                  </div>
                 ))}
+
               </div>
             </>
           )}
@@ -223,6 +350,7 @@ export default function ReportGenerator() {
                 <option value="P F POSITIVE">P F POSITIVE</option>
                 <option value="P V POSITIVE">P V POSITIVE</option>
                 <option value="NEGATIVE">NEGATIVE</option>
+                <option value="P F & P V POSITIVE">P F & P V POSITIVE</option>
               </select>
             </div>
           )}
@@ -233,18 +361,17 @@ export default function ReportGenerator() {
               <h2 className="font-semibold mb-2 text-gray-700">WIDAL TEST</h2>
 
               {/* Table Header */}
-              <div className="grid grid-cols-4 gap-4 border p-3 rounded text-sm font-semibold bg-gray-100">
+              <div className="grid grid-cols-3 gap-30 border p-3 rounded text-sm font-semibold bg-gray-100">
                 <span>Test</span>
                 <span>Result</span>
                 <span>Titre</span>
-                <span>Remarks</span>
               </div>
 
               {/* Table Rows */}
               {["S- TYPHI “O”", "S- TYPHI “H”", "S- TYPHI “AH”", "S- TYPHI “BH”"].map((test) => (
                 <div
                   key={test}
-                  className="grid grid-cols-4 gap-4 border-b p-2 items-center"
+                  className="grid grid-cols-3 gap-4 border-b p-2 items-center"
                 >
                   {/* Column 1: Key */}
                   <span className="font-semibold">{test}</span>
@@ -268,25 +395,12 @@ export default function ReportGenerator() {
                   {/* Column 3: Input (Titre) */}
                   <input
                     className="border p-2 rounded"
-                    placeholder="Titre"
+                    placeholder="40"
                     value={widalData[test]?.titre || ""}
                     onChange={(e) =>
                       setWidalData({
                         ...widalData,
                         [test]: { ...widalData[test], titre: e.target.value },
-                      })
-                    }
-                  />
-
-                  {/* Column 4: Input (Remarks) */}
-                  <input
-                    className="border p-2 rounded"
-                    placeholder="Remarks"
-                    value={widalData[test]?.remarks || ""}
-                    onChange={(e) =>
-                      setWidalData({
-                        ...widalData,
-                        [test]: { ...widalData[test], remarks: e.target.value },
                       })
                     }
                   />
@@ -301,15 +415,28 @@ export default function ReportGenerator() {
           {selectedReports.includes("HB") && (
             <div>
               <h2 className="font-semibold mb-2 text-gray-700">HEMOGLOBIN VALUE</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-64 overflow-y-auto border p-3 rounded">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border p-3 rounded">
                 {HB_RANGE.map(field => (
-                  <input key={field.key} className="border p-2 rounded" placeholder={`HEMOGLOBIN VALUE (${field.unit})`} value={HB_Float_Value || ""} onChange={(e) => set_HB_Float_Value(e.target.value)} />
-
+                  <input
+                    key={field.key}
+                    className="border p-2 rounded"
+                    placeholder={`HEMOGLOBIN VALUE (${field.unit})`}
+                    value={HB_Float_Value || ""}
+                    onChange={(e) => handleHbChange(e.target.value)}
+                  />
                 ))}
-                <input className="border p-2 rounded" placeholder="PERCENT VALUE" value={HB_Percent_Value || ""} onChange={(e) => set_HB_Percent_Value(e.target.value)} />
+                <input
+                  className="border p-2 rounded"
+                  placeholder="PERCENT VALUE"
+                  value={HB_Percent_Value || ""}
+                  disabled
+                />
               </div>
             </div>
           )}
+
+
+
           {/* LFT TEST */}
           {selectedReports.includes("LFT") && (
             <div>
@@ -317,7 +444,8 @@ export default function ReportGenerator() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4   border p-3 rounded">
                 {
                   [...S_BILLIRUBIN_RANGE, ...SGPT_RANGE, ...SGOT_RANGE, ...S_ALKALINE_PHOSPHATE_RANGE, ...TOTAL_PROTEIN_RANGE, ...ALBUMIN_RANGE, ...GLOBULIN_RANGE, ...ALB_GLOBULIN_RATIO_RANGE].map(field => (
-                    <input key={field.key} className="border p-2 rounded" placeholder={`${field.key} (${field.unit})`} value={LFT_Data[field.key] || ""} onChange={(e) => handleLFTChange(field.key, e.target.value)} />
+                    <input key={field.key} className="border p-2 rounded" placeholder={`${field.key} (${field.unit})`} value={LFT_Data[field.key] || ""}
+                      onChange={(e) => handleLFTChange(field.key, e.target.value)} disabled={field.key === "GLOBULIN" || field.key === "ALB/GLOBULIN RATIO"} />
                   ))
                 }
               </div>

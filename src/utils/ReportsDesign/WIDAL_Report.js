@@ -12,11 +12,11 @@ export function Widal_Design(doc, y, widalData) {
     ["S- TYPHI “O”", "S- TYPHI “H”", "S- TYPHI “AH”", "S- TYPHI “BH”"].forEach((field) => {
 
         doc.text(field, 25, y);
-        if (!widalData[field]?.result || !widalData[field]?.titre || !widalData[field]?.remarks) {
+        if (!widalData[field]?.result || !widalData[field]?.titre) {
             doc.text(`-- IN -:- DILUTION`, 90, y, { align: "left" });
         }
         else {
-            doc.text(`${widalData[field].result} IN ${widalData[field].titre}:${widalData[field].remarks} DILUTION`, 95, y, { align: "left" });
+            doc.text(`${widalData[field].result} IN 1:${widalData[field].titre} DILUTION`, 90, y, { align: "left" });
         }
 
         y += 12;

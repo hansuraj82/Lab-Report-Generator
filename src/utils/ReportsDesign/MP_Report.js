@@ -4,34 +4,52 @@ export function MP_card_Design(doc, mpCardResult, y) {
     doc.text("MP CARD", 20, y);
 
     if (mpCardResult) {
-        let x = 95;
+  const text = mpCardResult.trim();
+  let x = 95; // your x position
 
-        if (mpCardResult.startsWith("P F") || mpCardResult.startsWith("P V")) {
-            // split the first 2-letter marker ("P F" or "P V") and the rest
-            const [marker, ...rest] = mpCardResult.split(" ");
+  // ✅ Case 1: both PF & PV positive
+  if (text.includes("P F") && text.includes("P V")) {
+    // Draw "P F" in red
+    doc.setFont("Cambria", "bold").setFontSize(12).setTextColor(255, 0, 0);
+    doc.text("P F", x, y);
+    x += doc.getTextWidth("P F ");
 
-            // combine first 2 parts (P and F/V)
-            const firstPart = `${marker} ${rest.shift()}`;
+    // Draw "&" in black
+    doc.setTextColor(0, 0, 0);
+    doc.text("&", x, y);
+    x += doc.getTextWidth("& ");
 
-            // draw "P F" or "P V" in red
-            doc.setFont("Cambria", "bold").setFontSize(11).setTextColor(255, 0, 0);
-            doc.text(firstPart, x, y);
-            x += doc.getTextWidth(firstPart + " ");
+    // Draw "P V" in red
+    doc.setTextColor(255, 0, 0);
+    doc.text("P V", x, y);
+    x += doc.getTextWidth("P V ");
 
-            // draw remaining words in black
-            doc.setTextColor(0, 0, 0);
-            rest.forEach((word) => {
-                doc.text(word, x, y);
-                x += doc.getTextWidth(word + " ");
-            });
-        } else {
-            // default case (like "NEGATIVE")
-            doc.setFont("Cambria", "bold").setFontSize(11).setTextColor(0, 0, 0);
-            doc.text(mpCardResult, x, y);
-        }
+    // Draw remaining text ("POSITIVE") in black
+    doc.setTextColor(0, 0, 0);
+    doc.text("POSITIVE", x, y);
+  }
 
-        doc.setTextColor(0, 0, 0); // reset
-    }
+  // ✅ Case 2: single PF or PV positive
+  else if (text.startsWith("P F") || text.startsWith("P V")) {
+    const [marker1, marker2, ...rest] = text.split(" ");
+    const firstPart = `${marker1} ${marker2}`;
+
+    doc.setFont("Cambria", "bold").setFontSize(12).setTextColor(255, 0, 0);
+    doc.text(firstPart, x, y);
+    x += doc.getTextWidth(firstPart + " ");
+
+    doc.setTextColor(0, 0, 0);
+    doc.text(rest.join(" "), x, y);
+  }
+
+  // ✅ Case 3: default (like "NEGATIVE")
+  else {
+    doc.setFont("Cambria", "bold").setFontSize(12).setTextColor(0, 0, 0);
+    doc.text(text, x, y);
+  }
+}
+doc.setTextColor(0, 0, 0); // reset
+
 
     return y;
 }

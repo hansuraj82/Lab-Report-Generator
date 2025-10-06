@@ -11,12 +11,12 @@ import {
 
 export function KFT_Design(doc, y, KFT_Data) {
     y += 12;
-    doc.setFont("cambria", "bold").setFontSize(16).setTextColor(0, 0, 0);
+    doc.setFont("Cambria", "bold").setFontSize(18).setTextColor(0, 0, 0);
     doc.text("KIDNEY FUNCTION TEST (K F T):-", 20, y);
     y += 10;
 
 
-    doc.setFont("cambria", "normal").setFontSize(12);
+    doc.setFont("Cambria", "normal").setFontSize(12);
     [
         ...S_CREATININE_RANGE,
         ...S_UREA_RANGE,
@@ -28,7 +28,7 @@ export function KFT_Design(doc, y, KFT_Data) {
     ].forEach((field) => {
         doc.text(field.key, 20, y);
         getArrowValue(KFT_Data[field.key], field.range, doc, 95, y - 4);
-        getValOrDash(KFT_Data[field.key], doc, y)
+        getValOrDash(field.key,KFT_Data[field.key], doc,100, y)
         doc.text(field.range, 137, y);
         doc.text(field.unit, 175, y, { align: "left" });
         y += 10;

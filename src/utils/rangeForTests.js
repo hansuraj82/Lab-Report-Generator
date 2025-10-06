@@ -11,7 +11,32 @@ export const CBC_MAIN = [
   { key: "PCT", range: "0.10-0.28", unit: "%" },
 ];
 
+
+//cbc main range for men
+export const CBC_MAIN_FOR_MAN = [
+  { key: "WHITE CELL COUNT (TC)", range: "4.0-11.0", unit: "/CUMM" },
+  { key: "RBC (RED BLOOD CELLS)", range: "4.00-5.50", unit: "MILLION /CUM" },
+  { key: "HEMOGLOBIN", range: "12.0-16.0", unit: "gm/dl" },
+  { key: "PLATELET", range: "1.50-3.00", unit: "Lakh/cumm" },
+  { key: "HCT (PCV)", range: "40-48", unit: "%" },
+  { key: "MCV", range: "80-99", unit: "fl" },
+  { key: "MCH", range: "26-32", unit: "pq" },
+  { key: "MCHC", range: "32-36", unit: "gm%" },
+  { key: "MPV", range: "7.4-10.4", unit: "fl" },
+  { key: "PCT", range: "0.10-0.28", unit: "%" },
+];
+
+
+
 export const DIFFERENTIAL_WBC = [
+  { key: "NEUTROPHILLS", range: "50-70", unit: "%" },
+  { key: "LYMPHOCYTES", range: "20-40", unit: "%" },
+  { key: "ESONOPHILS", range: "1-6", unit: "%" },
+  { key: "MONOCYTES", range: "2-10", unit: "%" },
+  { key: "BASOPHILS", range: "0-2", unit: "%" },
+];
+
+export const DIFFERENTIAL_WBC_FOR_MAN = [
   { key: "NEUTROPHILLS", range: "50-70", unit: "%" },
   { key: "LYMPHOCYTES", range: "20-40", unit: "%" },
   { key: "ESONOPHILS", range: "1-6", unit: "%" },
@@ -92,7 +117,7 @@ export const S_CALCIUM_RANGE = [
 
 export const WIDAL_RANGE = [
   {
-    key: "WIDAL",range: "Less than 1:80"
+    key: "WIDAL",range: "Less than 1:40"
   }
 ];
 

@@ -1,11 +1,11 @@
 import { HigherArrow, LowerArrow } from "./Base64File/Logo";
 
 function lowerVal(doc,x,y) {
-    doc.addImage(`data:image/png;base64,${LowerArrow}`, "PNG", x, y, 3, 5);
+    doc.addImage(`data:image/png;base64,${LowerArrow}`, "PNG", x, y, 2, 5);
 }
 
 function higherVal(doc,x,y) {
-doc.addImage(`data:image/png;base64,${HigherArrow}`, "PNG", x, y, 3, 5);
+doc.addImage(`data:image/png;base64,${HigherArrow}`, "PNG", x, y, 2, 5);
 }
 
 export const getArrowValue = (val, range, doc, x,y) => {
@@ -13,7 +13,7 @@ export const getArrowValue = (val, range, doc, x,y) => {
     if (!val || !range.includes("-")) return val || "-";
 
     const [low, high] = range.split("-").map(n => parseFloat(n.trim()));
-    const num = parseFloat(val.trim());
+    const num = parseFloat(val);
 
     if (isNaN(num)) return val; // not a number, just return original
 
@@ -22,12 +22,12 @@ export const getArrowValue = (val, range, doc, x,y) => {
     return val;
 };
 
-export function getValOrDash(val,doc,y) {
+export function getValOrDash(field, val,doc,x,y) {
     if (!val || val==' / %') {
         doc.text("-",100,y)
     }
     else {
-        doc.text(`${val}`,100, y)
+        doc.text(`${val}`, x , y);
     }
     
 }

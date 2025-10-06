@@ -49,27 +49,44 @@ const generatePdf = ({
     doc.text("CONTACT NO:- 9770788771 ,9341423645", 105, 39, { align: "center" });
     doc.rect(0, 41, 225, 0);
     // Patient Info
-    doc.setFontSize(12);
+    doc.setFontSize(12).setFont("Cambria", "normal");
     doc.text(`PATIENT NAME : ${patientName.toUpperCase()}`, 20, 48);
+
+    let patientNameText = `PATIENT NAME `;
+    const patientNameTextWidth = (doc.getTextWidth(patientNameText) + 20);
+
     doc.text(`GENDER`, 20, 56);
-    doc.text(`: ${age} YEARS / ${gender}`, 54, 56)
+    const ageParts = [];
+    if (age.year) age.year > 1 ? ageParts.push(`${age.year} YEARS`) : ageParts.push(`${age.year} YEAR`);
+    if (age.month) age.month > 1 ? ageParts.push(`${age.month} MONTHS`) : ageParts.push(`${age.month} MONTH`);
+    if (age.day) age.day > 1 ? ageParts.push(`${age.day} DAYS`) : ageParts.push(`${age.day} DAY`);
+    const ageString = ageParts.join(" ") || "YEARS";
+
+    doc.text(`: ${ageString} / ${gender}`, patientNameTextWidth, 56);
 
 
-    doc.text(`TEST DATE : ${new Date().toLocaleDateString()}`, 140, 48);
+    //doc.text(`: ${age.year} YEARS / ${gender}`, patientNameTextWidth, 56);
+
+
+    doc.text(`TEST DATE : ${new Date().toLocaleDateString("en-GB")}`, 140, 48);
+
+    let testDateText = `TEST DATE `;
+    const testDateTextWidth = doc.getTextWidth(testDateText) + 140;
+
     doc.text(`ADDRESS`, 140, 56);
-    doc.text(`: ${address.toUpperCase()}`, 165, 56)
+    doc.text(`: ${address.toUpperCase()}`, testDateTextWidth, 56)
 
 
     doc.text(`REF. BY`, 20, 64);
-    doc.text(`: ${refBy.toUpperCase()}`, 54, 64)
+    doc.text(`: ${refBy.toUpperCase()}`, patientNameTextWidth, 64)
 
     doc.text(`S.NO `, 140, 64);
-    doc.text(`: `, 165, 64)
+    doc.text(`: `, testDateTextWidth, 64)
 
     //Thanks for referal line
 
     let y = 75;
-    doc.setFont("Cambria", "italic");
+    doc.setFont("Cambria", "normal").setFontSize(12);
     doc.text("THANKS FOR REFERAL", 105, 72, { align: "center" });
 
 
@@ -87,19 +104,19 @@ const generatePdf = ({
     // doc.text("UNIT", 185, 75, { align: "right" });
 
     // Investigation and Value header
-    doc.setTextColor(0, 0, 0).setFontSize(11).setFont("Cambria", "bold");
+    doc.setTextColor(0, 0, 0).setFontSize(14).setFont("Cambria", "normal");
 
     if (selectedReports.length === 1 && selectedReports[0] === "MP card") {
         // Only MP card selected
-        doc.text("INVESTIGATIONS", 20, 79);
-        doc.text("RESULT", 95, 79);
+        doc.text("INVESTIGATIONS", 20, 80);
+        doc.text("RESULT", 95, 80);
         y = 79
     } else {
         // CBC or multiple reports
-        doc.text("INVESTIGATIONS", 20, 79);
-        doc.text("VALUE", 95, 79);
-        doc.text("REF. RANGE", 135, 79);
-        doc.text("UNIT", 185, 79, { align: "right" });
+        doc.text("INVESTIGATIONS", 20, 80);
+        doc.text("VALUE", 95, 80);
+        doc.text("REF. RANGE", 135, 80);
+        doc.text("UNIT", 185, 80, { align: "right" });
         y = 79
     }
 
@@ -138,33 +155,34 @@ const generatePdf = ({
         y = KFT_Design(doc, y, KFT_Data);
     }
 
-        if (selectedReports.includes("Widal")) {
+    if (selectedReports.includes("Widal")) {
         y = Widal_Design(doc, y, widalData);
     }
 
 
     //End of result line after all data
     y += 12;
-    doc.setFont("cambria", "italic").setTextColor(0, 0, 0);
+    doc.setFont("Cambria", "italic").setTextColor(0, 0, 0).setFontSize(11);
     doc.text("…................ .END OF REPORT……………", 105, y, { align: "center" });
 
     // Footer
     // Footer
     y = 276;
-    doc.setTextColor(0, 0, 0).setFont("cambria", "normal");
+    doc.setTextColor(0, 0, 0).setFont("Cambria", "italic").setFontSize(12);
     doc.text("FULLY AUTOMATED LAB", 105, y, { align: "center" });
 
-    doc.addImage(`data:image/png;base64,${signture}`, "PNG", 150, y - 28, 60, 25);
+    doc.addImage(`data:image/png;base64,${signture}`, "PNG", 150, y - 20, 55, 18);
 
+    doc.setTextColor(0, 0, 0).setFont("Cambria", "italic").setFontSize(10);
     doc.text("Service Incharge", 160, y);
 
 
     y += 6;
-    doc.setFont("cambria", "italic").setTextColor(128, 128, 128);
+    doc.setFont("Cambria", "italic").setTextColor(0, 0, 0).setFontSize(10);;
     doc.text("- : NOT VALID FOR MEDICO-LEGAL PURPOSE :-", 105, y, { align: "center" });
 
     y += 6;
-    doc.setTextColor(0, 0, 0).setFont("cambria", "normal");
+    doc.setTextColor(0, 0, 0).setFont("Cambria", "normal");
     doc.text('"THE ENDLESS CARE BEGINS HEREWITH IMPROVED QUALITY"', 105, y, { align: "center" });
 
     // Preview
