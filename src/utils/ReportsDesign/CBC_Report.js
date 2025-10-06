@@ -20,6 +20,7 @@ export function CBC_Design(doc, cbcData, y) {
 
 
     doc.setFont("Cambria", "normal").setFontSize(10);
+    let arrowVal = false;
     CBC_MAIN.forEach((field) => {
         doc.text(field.key, 20, y);
         if (field.key === "HEMOGLOBIN") {
@@ -30,12 +31,12 @@ export function CBC_Design(doc, cbcData, y) {
             }
 
 
-            getArrowValue(cbcData[field.key]?.raw, field.range, doc, 95, y - 4);
-            getValOrDash(field.key, hemoValue, doc,100, y)
+            arrowVal = getArrowValue(cbcData[field.key]?.raw, field.range, doc, 95, y - 3.5);
+            getValOrDash(field.key, hemoValue, doc,100, y,arrowVal);
         }
         else {
-            getArrowValue(cbcData[field.key], field.range, doc, 95, y - 4);
-            getValOrDash(field.key, cbcData[field.key], doc,100, y)
+            arrowVal = getArrowValue(cbcData[field.key], field.range, doc, 95, y - 3.5);
+            getValOrDash(field.key, cbcData[field.key], doc,100, y , arrowVal)
         }
 
         doc.text(field.range, 137, y);
@@ -51,8 +52,10 @@ export function CBC_Design(doc, cbcData, y) {
     doc.setFont("Cambria", "normal").setFontSize(10);
     DIFFERENTIAL_WBC.forEach((field) => {
         doc.text(field.key, 20, y);
-        getArrowValue(cbcData[field.key], field.range, doc, 95, y - 4);
-        getValOrDash(field.key, cbcData[field.key], doc,100, y)
+        arrowVal = getArrowValue(cbcData[field.key], field.range, doc, 95, y - 3.5);
+        console.log(arrowVal);
+        
+        getValOrDash(field.key, cbcData[field.key], doc,100, y,arrowVal)
         doc.text(field.range, 135, y);
         doc.text(field.unit, 175, y, { align: "left" });
         y += 8;

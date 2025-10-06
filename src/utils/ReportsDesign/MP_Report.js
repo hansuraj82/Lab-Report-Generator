@@ -1,7 +1,10 @@
 export function MP_card_Design(doc, mpCardResult, y) {
     y += 12;
-    doc.setFont("Cambria", "normal").setFontSize(12);
-    doc.text("MP CARD", 20, y);
+    doc.setFont("Wingdings", "normal").setFontSize(14).setTextColor(255,0,0);
+    doc.text("",15,y);
+
+    doc.setFont("Cambria", "normal").setFontSize(12).setTextColor(0,0,0);
+    doc.text("MP CARD", 22, y);
 
     if (mpCardResult) {
   const text = mpCardResult.trim();

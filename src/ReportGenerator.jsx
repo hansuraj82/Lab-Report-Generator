@@ -273,7 +273,7 @@ console.log(age);
             {/* Add new doctor */}
             <div className="flex col-span-2 gap-2">
               <input className="border p-2 rounded flex-1" placeholder="Add new doctor" value={newDoctor} onChange={(e) => setNewDoctor(e.target.value)} />
-              <button onClick={handleAddDoctor} className="bg-green-500 text-white px-4 rounded">Add</button>
+              <button onClick={handleAddDoctor} className="addDoctorBtn cursPointer bg-green-500 text-white px-4 rounded">Add</button>
             </div>
           </div>
 
@@ -484,7 +484,7 @@ console.log(age);
 
 
           {/* Button */}
-          <button onClick={handleGeneratePdf} className="w-full mt-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+          <button onClick={handleGeneratePdf} className="genpdfbtn cursPointer w-full mt-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
             Generate Report (Preview)
           </button>
         </div>
@@ -494,7 +494,7 @@ console.log(age);
           <div className="fixed inset-0 bg-black bg-opacity-80 flex flex-col z-50">
             <div className="flex justify-between items-center bg-white p-4">
               <h2 className="text-lg font-bold">Report Preview</h2>
-              <button onClick={() => setShowPreview(false)} className="px-4 py-1 bg-red-500 text-white rounded hover:bg-red-600">Close</button>
+              <button onClick={() => setShowPreview(false)} className="px-4 py-1 closeBtn cursPointer bg-red-500 text-white rounded hover:bg-red-600">Close</button>
             </div>
             <iframe src={pdfUrl} className="flex-1 w-full bg-white"></iframe>
           </div>

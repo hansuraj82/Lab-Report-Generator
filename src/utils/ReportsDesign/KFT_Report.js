@@ -11,12 +11,12 @@ import {
 
 export function KFT_Design(doc, y, KFT_Data) {
     y += 12;
-    doc.setFont("Cambria", "bold").setFontSize(18).setTextColor(0, 0, 0);
-    doc.text("KIDNEY FUNCTION TEST (K F T):-", 20, y);
+    doc.setFont("Cambria", "normal").setFontSize(18).setTextColor(0, 0, 0);
+    doc.text("KIDNEY FUNCTION TEST (K F T):-", 17, y);
     y += 10;
 
+    let arrowVal = false;
 
-    doc.setFont("Cambria", "normal").setFontSize(12);
     [
         ...S_CREATININE_RANGE,
         ...S_UREA_RANGE,
@@ -26,9 +26,12 @@ export function KFT_Design(doc, y, KFT_Data) {
         ...S_SODIUM_RANGE,
         ...S_CALCIUM_RANGE
     ].forEach((field) => {
-        doc.text(field.key, 20, y);
-        getArrowValue(KFT_Data[field.key], field.range, doc, 95, y - 4);
-        getValOrDash(field.key,KFT_Data[field.key], doc,100, y)
+        doc.setFont("Wingdings", "normal").setFontSize(14).setTextColor(255, 0, 0);
+        doc.text("", 17, y);
+        doc.setFont("Cambria", "normal").setFontSize(12).setTextColor(0, 0, 0);
+        doc.text(field.key, 25, y);
+        arrowVal = getArrowValue(KFT_Data[field.key], field.range, doc, 95, y - 3.5);
+        getValOrDash(field.key, KFT_Data[field.key], doc, 100, y, arrowVal)
         doc.text(field.range, 137, y);
         doc.text(field.unit, 175, y, { align: "left" });
         y += 10;

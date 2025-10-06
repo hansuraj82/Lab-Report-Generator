@@ -3,6 +3,7 @@ import "../utils/Cambria-Italic";
 import "../utils/Cambria.js";
 import "../utils/CambriaMath.js";
 import "../utils/Cambria-Bold.js";
+import "../utils/Wingdings-Regular.js";
 
 import { CBC_Design } from "../utils/ReportsDesign/CBC_Report";
 import { MP_card_Design } from "../utils/ReportsDesign/MP_Report";
@@ -37,8 +38,6 @@ const generatePdf = ({
 
     let x = 10;
     // Header Text
-    // doc.setFontSize(52).setFont("times", "bold").setTextColor(64, 131, 238);
-    // doc.text("FAMOUS PATHO LAB", 105, 20, { align: "center" });
     doc.addImage(`data:image/png;base64,${HeadingLogo}`, "PNG", x, 10, 192.4, 16.3);
     doc.setTextColor(0, 0, 0);
     doc.setFontSize(10).setFont("Cambria", "normal");
@@ -86,15 +85,17 @@ const generatePdf = ({
     //Thanks for referal line
 
     let y = 75;
-    doc.setFont("Cambria", "normal").setFontSize(12);
-    doc.text("THANKS FOR REFERAL", 105, 72, { align: "center" });
+    doc.setFont("Cambria", "italic").setFontSize(12);
+    doc.text("THANKS FOR REFERAL", 105, 73, { align: "center" });
 
 
     // Full Boundary
-    doc.rect(15, 73, 193, 205);
+    // doc.rect(15, 73, 205, 205);
 
     //investigation , value, range  and unit boundary
-    doc.rect(15, 83, 193, 0)
+    doc.rect(15, 73.5, 190, 10)
+    doc.line(15,83.5,15,278)
+    
 
     // //investigation and value
     // doc.setTextColor(0, 0, 0).setFontSize(11).setFont("times", "bold");
@@ -104,7 +105,7 @@ const generatePdf = ({
     // doc.text("UNIT", 185, 75, { align: "right" });
 
     // Investigation and Value header
-    doc.setTextColor(0, 0, 0).setFontSize(14).setFont("Cambria", "normal");
+    doc.setTextColor(0, 0, 0).setFontSize(12).setFont("Cambria", "normal");
 
     if (selectedReports.length === 1 && selectedReports[0] === "MP card") {
         // Only MP card selected
@@ -170,6 +171,9 @@ const generatePdf = ({
     y = 276;
     doc.setTextColor(0, 0, 0).setFont("Cambria", "italic").setFontSize(12);
     doc.text("FULLY AUTOMATED LAB", 105, y, { align: "center" });
+    console.log(y);
+    
+    doc.line(15,y+2,225,y+2)
 
     doc.addImage(`data:image/png;base64,${signture}`, "PNG", 150, y - 20, 55, 18);
 
